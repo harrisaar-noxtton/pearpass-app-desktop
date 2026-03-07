@@ -1,3 +1,4 @@
+// index.tsx
 import React from 'react'
 import { colors } from 'pearpass-lib-ui-theme-provider'
 
@@ -7,9 +8,11 @@ import {
   AvatarImage,
   AvatarSize,
   FavoriteIcon,
-  SelectedAvatarContainer
+  RetryBadge,
+  SelectedAvatarContainer,
+  Spinner
 } from './styles'
-import { CheckIcon, StarIcon } from '../../lib-react-components'
+import { CheckIcon, StarIcon, SyncingIcon } from '../../lib-react-components'
 import { useFavicon } from 'pearpass-lib-vault'
 
 interface Props {
@@ -25,7 +28,18 @@ interface Props {
 export const RecordAvatar = (props: Props): React.ReactElement => {
   const { websiteDomain, initials, size, isSelected, isFavorite, color, testId } = props
 
-  const { faviconSrc, isLoading } = useFavicon({ url: websiteDomain })
+  const { faviconSrc, isLoading, error, retry } = useFavicon({ url: websiteDomain })
+
+  React.useEffect(() => {
+    if (error) {
+      console.log(`[RecordAvatar] Effect: Error set to:`, error)
+    }
+  }, [error])
+
+  const handleRetry = (): void => {
+    console.log(`[RecordAvatar] Firing Retry for ${websiteDomain}`)
+    if (retry) retry()
+  }
 
   if (isSelected) {
     return (
@@ -41,10 +55,18 @@ export const RecordAvatar = (props: Props): React.ReactElement => {
     <AvatarContainer size={size} data-testid={testId}>
       {isFaviconLoaded && <AvatarImage src={faviconSrc} />}
 
-      {!isFaviconLoaded && (
+      {!isLoading && !isFaviconLoaded && (
         <AvatarAlt color={color} size={size}>
           {initials}
         </AvatarAlt>
+      )}
+
+      {isLoading && <Spinner size={size} color={color} />}
+
+      {error && !isLoading && (
+        <RetryBadge onClick={handleRetry} title="Failed to load favicon. Click to retry." size={size}>
+          <SyncingIcon size={size === 'sm' ? "10" : "12"} color={colors.white.mode1} />
+        </RetryBadge>
       )}
 
       {isFavorite && (

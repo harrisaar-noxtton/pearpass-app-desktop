@@ -131,7 +131,8 @@ declare module 'pearpass-lib-vault' {
   export function useFavicon(params: { url: string }): {
     faviconSrc: string | null
     isLoading: boolean
-    hasError: boolean
+    error: string | null
+    retry: () => void
   }
 }
 

@@ -1,4 +1,5 @@
-import styled from 'styled-components'
+// styles.ts
+import styled, { keyframes } from 'styled-components'
 
 export type AvatarSize = 'md' | 'sm'
 
@@ -25,6 +26,10 @@ const getAvatarFontSize = (size?: AvatarSize): string => {
   return size === 'sm' ? '12px' : '16px'
 }
 
+const getRetryBadgeSize = (size?: AvatarSize): string => {
+  return size === 'sm' ? '14px' : '16px'
+}
+
 export const AvatarContainer = styled.div<AvatarContainerProps>`
   position: relative;
   display: flex;
@@ -47,6 +52,20 @@ export const AvatarAlt = styled.div<AvatarAltProps>`
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+`
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`
+
+export const Spinner = styled.div<{ size?: AvatarSize; color: string }>`
+  width: ${({ size }) => (size === 'sm' ? '12px' : '16px')};
+  height: ${({ size }) => (size === 'sm' ? '12px' : '16px')};
+  border: 2px solid ${({ color }) => color};
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ${spin} 0.8s linear infinite;
 `
 
 export const SelectedAvatarContainer = styled.div`
@@ -76,4 +95,19 @@ export const AvatarImage = styled.img`
   min-width: 0;
   display: flex;
   object-fit: cover;
+`
+
+export const RetryBadge = styled.div<{ size?: AvatarSize }>`
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: ${({ size }) => getRetryBadgeSize(size)};
+  height: ${({ size }) => getRetryBadgeSize(size)};
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.error400?.mode1 ?? '#e53e3e'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
 `
